@@ -181,7 +181,14 @@ for (i in 1:3){
 
 # Try plotting 
 ggplot(data = age_diff) +
-  geom_point(aes(x = depths, y = c('age20', 'age13'), colour = curve))
+  geom_point(aes(x = depths, y = age20)) +
+  geom_point(aes(x = depths, y = age13), colour = 'red', alpha = .2)
+
+goo  = melt(age_diff, id.vars = 'depths')
+
+ggplot(data = goo) +
+  geom_point(aes(x = depths, y = value, colour = variable))
+  
 
 
 
