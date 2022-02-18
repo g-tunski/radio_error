@@ -4,7 +4,7 @@ library(reshape2)
 library(ggplot2)
 
 
-dat = read.csv('neotoma_northamerica_chroncontrols_subset.csv')
+dat = read.csv('data/neotoma_northamerica_chroncontrols_subset.csv')
 
 idx = which(!is.na(dat$age))
 dat = dat[idx,]
@@ -189,8 +189,69 @@ goo  = melt(age_diff, id.vars = 'depths')
 ggplot(data = goo) +
   geom_point(aes(x = depths, y = value, colour = variable))
   
+##############################################################################################################
+## overlap in age distributions
+## for each depth, determines the estimates area of overlap
+##############################################################################################################
 
+## FIXME: we really should be storing corresponding ids with list elements in out13 and out20
 
+# list of all of the dataset ids
+ids = unique(dat$datasetid)
+
+# number of datasets
+N_datasets = length(ids)
+
+# define data frame to store the differences
+# for now let's define the columns: datasetid, depths, diff
+# this data frame is empty; we need to tell R what type of data will go in each column
+olap = data.frame(datasetid = numeric(0),
+                     depths = numeric(0),
+                     overlap = numeric(0))
+
+# loop over the sites
+# for now do this for the first three sites
+for (i in 1:3){
+  
+  # get the dataset id for site i
+  # this dataset id will correspond with the i-th element in the ids vector
+  id_dataset = ids[i]
+  
+  # assigning the output from site i to out_site
+  # not necessary but helps think through steps for now
+  out_site20 = out20[[i]]
+  
+  # do the same thing for other age-depth model
+  out_site13 = out13[[i]]
+  
+  # get the number of depths
+  # assume the same for both age models
+  # set to 100 for now- default in Bchronology
+  N_depths = nrow(out_site20)
+  
+  for (j in 1:N_depths){
+    
+    # overlap function needs a list, where each lsit element is a vector
+    # each vector represents a distribution (discrete samples from that distribution)
+    d_list = list(as.numeric(out_site13[j,2:ncol(out_site13)]), as.numeric(out_site20[j,2:ncol(out_site20)]))
+    
+    
+    # calculates overlapping area of the two distributions
+    # overlap index of 1 means 100% overlap
+    # overlap index of 0 means 0% overlap
+    # if you want to visualize, plot=TRUE; to speed up, plot=FALSE
+    olap_index = overlap(d_list, plot=TRUE)$OV
+    
+    olap_site = data.frame(datasetid = id_dataset,
+                           depths    = out_site13[j,1],
+                           overlap   = olap_index)
+    # append the differences for site i to the existing data frame age_diff 
+    olap = rbind(olap,
+                 olap_site)
+  
+  }
+  
+}
 
 
 # 
