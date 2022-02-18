@@ -2,6 +2,7 @@ library(dplyr)
 library(Bchron)
 library(reshape2)
 library(ggplot2)
+library(overlapping)
 
 
 dat = read.csv('data/neotoma_northamerica_chroncontrols_subset.csv')
