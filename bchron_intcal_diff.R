@@ -8,7 +8,9 @@ library(overlapping)
 dat = read.csv('data/neotoma_northamerica_chroncontrols_subset.csv')
 
 idx = which(!is.na(dat$age))
+
 dat = dat[idx,]
+
 
 idx_depth = which(!is.na(dat$depth))
 dat = dat[idx_depth,]
@@ -232,7 +234,7 @@ for (i in 1:3){
   
   for (j in 1:N_depths){
     
-    # overlap function needs a list, where each lsit element is a vector
+    # overlap function needs a list, where each list element is a vector
     # each vector represents a distribution (discrete samples from that distribution)
     d_list = list(as.numeric(out_site13[j,2:ncol(out_site13)]), as.numeric(out_site20[j,2:ncol(out_site20)]))
     
@@ -253,6 +255,19 @@ for (i in 1:3){
   }
   
 }
+
+# Overlap v.s depths
+# scatterplot
+ggplot(data = olap) +
+    geom_point(aes(x = depths, y = overlap))
+
+  
+
+
+# It's certainly not this
+# ggplot(data = olap) +
+#   geom_histogram(aes( y = overlap))
+  
 
 
 # 
